@@ -1,0 +1,1022 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>암호화폐 분석 결과</title>
+    <script src="https://s3.tradingview.com/tv.js"></script>
+    <style>
+        :root {
+            --primary-color: #1a1a2e;
+            --secondary-color: #16213e;
+            --accent-color: #0f4c75;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --border-color: #e0e6ed;
+            --chart-bg: #1e222d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .header .subtitle {
+            text-align: center;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .nav-menu {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            padding: 1.3rem 2.5rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link.dashboard {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .nav-link.market {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .nav-link.pattern {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .nav-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            filter: brightness(1.1);
+        }
+
+        .analysis-summary {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--secondary-color);
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+        .chart-section {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .chart-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .binance-btn {
+            background: linear-gradient(135deg, #f0b90b, #f8d12f);
+            color: #1e2329;
+        }
+
+        .binance-btn:hover {
+            background: linear-gradient(135deg, #fcd535, #f0b90b);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(240, 185, 11, 0.4);
+        }
+
+        .chart-container {
+            height: 800px;
+            margin-top: 1.5rem;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background: var(--chart-bg);
+        }
+
+        .history-section {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .history-table th {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            font-weight: 600;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .history-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .symbol-link {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.3rem 0.6rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .symbol-link:hover {
+            background: var(--accent-color);
+            color: white;
+            text-decoration: none;
+        }
+
+        .risk-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .risk-low {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .risk-medium {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .risk-high {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* 24시간 추적 결과 스타일 */
+        .tracking-result {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .tracking-profit {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .tracking-loss {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+
+        .tracking-pending {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            color: #856404;
+            border: 2px solid #ffc107;
+        }
+
+        .tracking-failed {
+            background: #e9ecef;
+            color: #6c757d;
+            border: 2px solid #adb5bd;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border: 2px solid #ffc107;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 5px 20px rgba(255, 193, 7, 0.2);
+        }
+
+        .warning-title {
+            color: #856404;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .warning-text {
+            color: #856404;
+            line-height: 1.8;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .tracking-info {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border: 2px solid #2196f3;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 3px 10px rgba(33, 150, 243, 0.2);
+        }
+
+        .tracking-info-title {
+            color: #1565c0;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .tracking-info-text {
+            color: #1976d2;
+            line-height: 1.6;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .chart-container {
+                height: 600px;
+            }
+
+            .chart-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .chart-controls {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .history-table {
+                font-size: 0.9rem;
+            }
+            
+            .history-table th,
+            .history-table td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <div class="header">
+            <h1>🧠 AI 코인선물 롱포지션 종목 분석</h1>
+            <div class="subtitle">신경망 기반 분석 • 2025-10-11 16:01:48</div>
+        </div>
+
+        <!-- 개선된 네비게이션 -->
+        <div class="nav-menu">
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link dashboard">📊 코인선물 종합 지수</a>
+                <a href="BinanceMarketOverview.html" class="nav-link market">🌍 코인선물 시장 현황</a>
+                <a href="CandlePatternAnalysis.html" class="nav-link pattern">📈 코인선물 롱포시션 패턴 검출 현황</a>
+            </div>
+        </div>
+
+        <!-- 최고 점수 종목 분석 -->
+        
+        <div class="analysis-summary">
+            <h2 class="section-title">📈 AI 롱포지션 최고점수 평가 종목</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">1000000MOGUSDT</div>
+                    <div class="stat-label">종목명</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">43</div>
+                    <div class="stat-label">최종 점수</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">43.0%</div>
+                    <div class="stat-label">신뢰도</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">42.6%</div>
+                    <div class="stat-label">GO 확률</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$0.465900</div>
+                    <div class="stat-label">현재가</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value risk-badge risk-high">HIGH</div>
+                    <div class="stat-label">리스크</div>
+                </div>
+            </div>
+            
+            <div class="tracking-info">
+                <div class="tracking-info-title">📊 24시간 성과 추적 시스템</div>
+                <div class="tracking-info-text">
+                    이 종목은 24시간 후 실제 가격 변화를 자동으로 추적하여 분석 정확도를 검증합니다. 
+                    추적 결과는 아래 히스토리 테이블에서 확인할 수 있습니다.
+                </div>
+            </div>
+        </div>
+        
+
+        <!-- 개선된 실시간 차트 -->
+        
+        <div class="chart-section" id="chartSection">
+            <div class="chart-header">
+                <h2 class="section-title">📈 1000000MOGUSDT 실시간 차트 (4시간봉)</h2>
+                <div class="chart-controls">
+                    <a href="https://www.binance.com/en/futures/1000000MOG_USDT" target="_blank" class="chart-btn binance-btn">
+                        🏦 바이낸스에서 보기
+                    </a>
+                </div>
+            </div>
+            <div class="chart-container" id="chartContainer">
+                <div id="tradingview_chart" style="height: 800px; width: 100%;"></div>
+            </div>
+        </div>
+        
+        <script>
+            // TradingView 위젯 생성
+            new TradingView.widget({
+                "width": "100%",
+                "height": 800,
+                "symbol": "BINANCE:1000000MOGUSDT",
+                "interval": "240",
+                "timezone": "Asia/Seoul",
+                "theme": "dark",
+                "style": "1",
+                "locale": "kr",
+                "toolbar_bg": "#000000",
+                "enable_publishing": false,
+                "hide_top_toolbar": false,
+                "hide_legend": false,
+                "save_image": false,
+                "container_id": "tradingview_chart",
+                "studies": [
+                    "RSI@tv-basicstudies",
+                    "MASimple@tv-basicstudies",
+                    "Volume@tv-basicstudies"
+                ]
+            });
+        </script>
+        
+
+        <!-- 24시간 추적 히스토리 -->
+        
+        <div class="history-section">
+            <h2 class="section-title">📋 AI 롱포지션 최고점수 평가 종목 24시간 성과 추적</h2>
+            
+            <div class="tracking-info">
+                <div class="tracking-info-title">📊 추적 성과 요약 (완료된 거래 기준)</div>
+                <div class="tracking-info-text">
+                    <strong>승률:</strong> 58.1% (25/43) | 
+                    <strong>평균 수익률:</strong> +4.29% | 
+                    <strong>총 추적 건수:</strong> 50건
+                </div>
+            </div>
+            
+            <p style="margin: 1.5rem 0; color: #666;">
+                AI가 제안한 종목들의 24시간 후 실제 결과를 추적합니다. 
+                <span style="color: var(--success-color); font-weight: bold;">초록색</span>은 수익, 
+                <span style="color: var(--danger-color); font-weight: bold;">빨간색</span>은 손실을 의미합니다.
+            </p>
+            
+            <div style="overflow-x: auto;">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>분석날짜</th>
+                            <th>종목</th>
+                            <th>AI점수</th>
+                            <th>GO확률</th>
+                            <th>24h 결과</th>
+                            <th>상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-11 (토) 16:01</td>
+                    <td><a href="https://www.binance.com/en/futures/1000000MOG_USDT" target="_blank" class="symbol-link">1000000MOGUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">43</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">42.6%</td>
+                    <td><div class="tracking-result tracking-pending">대기중</div></td>
+                    <td><span class="risk-badge risk-medium">대기</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-11 (토) 12:02</td>
+                    <td><a href="https://www.binance.com/en/futures/1000000MOG_USDT" target="_blank" class="symbol-link">1000000MOGUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">41</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">40.6%</td>
+                    <td><div class="tracking-result tracking-pending">대기중</div></td>
+                    <td><span class="risk-badge risk-medium">대기</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-11 (토) 08:01</td>
+                    <td><a href="https://www.binance.com/en/futures/SOON_USDT" target="_blank" class="symbol-link">SOONUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">36</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">36.2%</td>
+                    <td><div class="tracking-result tracking-pending">대기중</div></td>
+                    <td><span class="risk-badge risk-medium">대기</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-11 (토) 04:01</td>
+                    <td><a href="https://www.binance.com/en/futures/SOON_USDT" target="_blank" class="symbol-link">SOONUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">42</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">42.0%</td>
+                    <td><div class="tracking-result tracking-pending">대기중</div></td>
+                    <td><span class="risk-badge risk-medium">대기</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-11 (토) 00:02</td>
+                    <td><a href="https://www.binance.com/en/futures/SOON_USDT" target="_blank" class="symbol-link">SOONUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">39</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">39.1%</td>
+                    <td><div class="tracking-result tracking-pending">대기중</div></td>
+                    <td><span class="risk-badge risk-medium">대기</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-10 (금) 20:02</td>
+                    <td><a href="https://www.binance.com/en/futures/SAPIEN_USDT" target="_blank" class="symbol-link">SAPIENUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">41</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">40.8%</td>
+                    <td><div class="tracking-result tracking-pending">대기중</div></td>
+                    <td><span class="risk-badge risk-medium">대기</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-10 (금) 16:02</td>
+                    <td><a href="https://www.binance.com/en/futures/SAPIEN_USDT" target="_blank" class="symbol-link">SAPIENUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">39</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">39.4%</td>
+                    <td><div class="tracking-result tracking-pending">대기중</div></td>
+                    <td><span class="risk-badge risk-medium">대기</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-10 (금) 12:02</td>
+                    <td><a href="https://www.binance.com/en/futures/YALA_USDT" target="_blank" class="symbol-link">YALAUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">39</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">38.6%</td>
+                    <td><div class="tracking-result tracking-loss">-13.91%</div></td>
+                    <td><span class="risk-badge risk-high">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-10 (금) 08:01</td>
+                    <td><a href="https://www.binance.com/en/futures/1000000MOG_USDT" target="_blank" class="symbol-link">1000000MOGUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">40</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">40.4%</td>
+                    <td><div class="tracking-result tracking-loss">-39.63%</div></td>
+                    <td><span class="risk-badge risk-high">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-10 (금) 04:01</td>
+                    <td><a href="https://www.binance.com/en/futures/HANA_USDT" target="_blank" class="symbol-link">HANAUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">45</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">44.6%</td>
+                    <td><div class="tracking-result tracking-profit">+3.60%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-09 (목) 16:02</td>
+                    <td><a href="https://www.binance.com/en/futures/1000000MOG_USDT" target="_blank" class="symbol-link">1000000MOGUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">43</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">43.1%</td>
+                    <td><div class="tracking-result tracking-loss">-3.08%</div></td>
+                    <td><span class="risk-badge risk-high">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-07 (화) 06:02</td>
+                    <td><a href="https://www.binance.com/en/futures/SAPIEN_USDT" target="_blank" class="symbol-link">SAPIENUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">38</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">38.1%</td>
+                    <td><div class="tracking-result tracking-loss">-7.61%</div></td>
+                    <td><span class="risk-badge risk-high">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-07 (화) 02:02</td>
+                    <td><a href="https://www.binance.com/en/futures/SOON_USDT" target="_blank" class="symbol-link">SOONUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">38</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">38.5%</td>
+                    <td><div class="tracking-result tracking-profit">+54.25%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-06 (월) 22:02</td>
+                    <td><a href="https://www.binance.com/en/futures/1000000MOG_USDT" target="_blank" class="symbol-link">1000000MOGUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">39</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">39.0%</td>
+                    <td><div class="tracking-result tracking-profit">+0.37%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-06 (월) 18:02</td>
+                    <td><a href="https://www.binance.com/en/futures/USELESS_USDT" target="_blank" class="symbol-link">USELESSUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">38</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">38.2%</td>
+                    <td><div class="tracking-result tracking-profit">+17.18%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-06 (월) 14:01</td>
+                    <td><a href="https://www.binance.com/en/futures/SOON_USDT" target="_blank" class="symbol-link">SOONUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">41</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">40.6%</td>
+                    <td><div class="tracking-result tracking-profit">+71.35%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-06 (월) 10:01</td>
+                    <td><a href="https://www.binance.com/en/futures/ZORA_USDT" target="_blank" class="symbol-link">ZORAUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">41</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">41.0%</td>
+                    <td><div class="tracking-result tracking-profit">+11.35%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-06 (월) 06:01</td>
+                    <td><a href="https://www.binance.com/en/futures/USELESS_USDT" target="_blank" class="symbol-link">USELESSUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">39</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">39.2%</td>
+                    <td><div class="tracking-result tracking-profit">+27.89%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-06 (월) 02:01</td>
+                    <td><a href="https://www.binance.com/en/futures/USELESS_USDT" target="_blank" class="symbol-link">USELESSUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">41</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">40.5%</td>
+                    <td><div class="tracking-result tracking-profit">+15.40%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-05 (일) 22:01</td>
+                    <td><a href="https://www.binance.com/en/futures/SOON_USDT" target="_blank" class="symbol-link">SOONUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">44</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">43.7%</td>
+                    <td><div class="tracking-result tracking-loss">-0.28%</div></td>
+                    <td><span class="risk-badge risk-high">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-05 (일) 18:01</td>
+                    <td><a href="https://www.binance.com/en/futures/SOON_USDT" target="_blank" class="symbol-link">SOONUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">38</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">38.0%</td>
+                    <td><div class="tracking-result tracking-profit">+3.28%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-05 (일) 14:02</td>
+                    <td><a href="https://www.binance.com/en/futures/ZORA_USDT" target="_blank" class="symbol-link">ZORAUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">41</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">40.9%</td>
+                    <td><div class="tracking-result tracking-loss">-6.44%</div></td>
+                    <td><span class="risk-badge risk-high">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-05 (일) 10:01</td>
+                    <td><a href="https://www.binance.com/en/futures/YALA_USDT" target="_blank" class="symbol-link">YALAUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">37</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">37.5%</td>
+                    <td><div class="tracking-result tracking-loss">-0.10%</div></td>
+                    <td><span class="risk-badge risk-high">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-05 (일) 06:01</td>
+                    <td><a href="https://www.binance.com/en/futures/ZORA_USDT" target="_blank" class="symbol-link">ZORAUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">40</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">39.9%</td>
+                    <td><div class="tracking-result tracking-loss">-7.38%</div></td>
+                    <td><span class="risk-badge risk-high">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-05 (일) 02:01</td>
+                    <td><a href="https://www.binance.com/en/futures/ZORA_USDT" target="_blank" class="symbol-link">ZORAUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">40</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">40.1%</td>
+                    <td><div class="tracking-result tracking-loss">-3.44%</div></td>
+                    <td><span class="risk-badge risk-high">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-04 (토) 22:02</td>
+                    <td><a href="https://www.binance.com/en/futures/SAPIEN_USDT" target="_blank" class="symbol-link">SAPIENUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">38</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">38.1%</td>
+                    <td><div class="tracking-result tracking-loss">-2.87%</div></td>
+                    <td><span class="risk-badge risk-high">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-04 (토) 18:01</td>
+                    <td><a href="https://www.binance.com/en/futures/SOON_USDT" target="_blank" class="symbol-link">SOONUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">37</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">36.8%</td>
+                    <td><div class="tracking-result tracking-profit">+2.16%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-04 (토) 14:01</td>
+                    <td><a href="https://www.binance.com/en/futures/SOON_USDT" target="_blank" class="symbol-link">SOONUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">39</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">38.6%</td>
+                    <td><div class="tracking-result tracking-profit">+3.46%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-04 (토) 10:01</td>
+                    <td><a href="https://www.binance.com/en/futures/SAPIEN_USDT" target="_blank" class="symbol-link">SAPIENUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">39</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">39.5%</td>
+                    <td><div class="tracking-result tracking-loss">-2.54%</div></td>
+                    <td><span class="risk-badge risk-high">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-04 (토) 06:02</td>
+                    <td><a href="https://www.binance.com/en/futures/ZORA_USDT" target="_blank" class="symbol-link">ZORAUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">38</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">37.9%</td>
+                    <td><div class="tracking-result tracking-loss">-1.39%</div></td>
+                    <td><span class="risk-badge risk-high">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-04 (토) 02:01</td>
+                    <td><a href="https://www.binance.com/en/futures/HANA_USDT" target="_blank" class="symbol-link">HANAUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">41</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">41.2%</td>
+                    <td><div class="tracking-result tracking-profit">+8.54%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-03 (금) 22:02</td>
+                    <td><a href="https://www.binance.com/en/futures/HANA_USDT" target="_blank" class="symbol-link">HANAUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">42</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">41.7%</td>
+                    <td><div class="tracking-result tracking-profit">+12.08%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-03 (금) 18:02</td>
+                    <td><a href="https://www.binance.com/en/futures/ZORA_USDT" target="_blank" class="symbol-link">ZORAUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">37</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">37.3%</td>
+                    <td><div class="tracking-result tracking-loss">-4.93%</div></td>
+                    <td><span class="risk-badge risk-high">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-03 (금) 14:01</td>
+                    <td><a href="https://www.binance.com/en/futures/SOON_USDT" target="_blank" class="symbol-link">SOONUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">36</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">36.2%</td>
+                    <td><div class="tracking-result tracking-loss">-10.94%</div></td>
+                    <td><span class="risk-badge risk-high">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-03 (금) 10:01</td>
+                    <td><a href="https://www.binance.com/en/futures/HANA_USDT" target="_blank" class="symbol-link">HANAUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">36</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">35.6%</td>
+                    <td><div class="tracking-result tracking-profit">+3.90%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-03 (금) 06:01</td>
+                    <td><a href="https://www.binance.com/en/futures/HANA_USDT" target="_blank" class="symbol-link">HANAUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">40</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">40.3%</td>
+                    <td><div class="tracking-result tracking-profit">+3.51%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-03 (금) 02:01</td>
+                    <td><a href="https://www.binance.com/en/futures/HANA_USDT" target="_blank" class="symbol-link">HANAUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">37</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">37.2%</td>
+                    <td><div class="tracking-result tracking-profit">+6.00%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-02 (목) 22:02</td>
+                    <td><a href="https://www.binance.com/en/futures/USELESS_USDT" target="_blank" class="symbol-link">USELESSUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">36</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">36.1%</td>
+                    <td><div class="tracking-result tracking-profit">+5.02%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-02 (목) 20:42</td>
+                    <td><a href="https://www.binance.com/en/futures/SQD_USDT" target="_blank" class="symbol-link">SQDUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">38</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">37.9%</td>
+                    <td><div class="tracking-result tracking-profit">+1.01%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-02 (목) 18:02</td>
+                    <td><a href="https://www.binance.com/en/futures/ARIA_USDT" target="_blank" class="symbol-link">ARIAUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">38</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">37.8%</td>
+                    <td><div class="tracking-result tracking-loss">-1.76%</div></td>
+                    <td><span class="risk-badge risk-high">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-02 (목) 14:02</td>
+                    <td><a href="https://www.binance.com/en/futures/PROVE_USDT" target="_blank" class="symbol-link">PROVEUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">38</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">37.9%</td>
+                    <td><div class="tracking-result tracking-loss">-11.46%</div></td>
+                    <td><span class="risk-badge risk-high">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-02 (목) 10:01</td>
+                    <td><a href="https://www.binance.com/en/futures/MITO_USDT" target="_blank" class="symbol-link">MITOUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">41</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">40.9%</td>
+                    <td><div class="tracking-result tracking-profit">+9.84%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-02 (목) 06:01</td>
+                    <td><a href="https://www.binance.com/en/futures/ICNT_USDT" target="_blank" class="symbol-link">ICNTUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">38</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">37.7%</td>
+                    <td><div class="tracking-result tracking-profit">+12.92%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-02 (목) 02:01</td>
+                    <td><a href="https://www.binance.com/en/futures/PORT3_USDT" target="_blank" class="symbol-link">PORT3USDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">41</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">40.8%</td>
+                    <td><div class="tracking-result tracking-profit">+8.64%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-01 (수) 22:01</td>
+                    <td><a href="https://www.binance.com/en/futures/PORT3_USDT" target="_blank" class="symbol-link">PORT3USDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">43</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">42.7%</td>
+                    <td><div class="tracking-result tracking-profit">+17.94%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-01 (수) 18:03</td>
+                    <td><a href="https://www.binance.com/en/futures/MITO_USDT" target="_blank" class="symbol-link">MITOUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">42</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">42.1%</td>
+                    <td><div class="tracking-result tracking-profit">+2.45%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-01 (수) 14:01</td>
+                    <td><a href="https://www.binance.com/en/futures/MITO_USDT" target="_blank" class="symbol-link">MITOUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">40</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">39.7%</td>
+                    <td><div class="tracking-result tracking-profit">+4.12%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-01 (수) 10:01</td>
+                    <td><a href="https://www.binance.com/en/futures/PORT3_USDT" target="_blank" class="symbol-link">PORT3USDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">40</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">40.4%</td>
+                    <td><div class="tracking-result tracking-profit">+5.86%</div></td>
+                    <td><span class="risk-badge risk-low">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-01 (수) 06:01</td>
+                    <td><a href="https://www.binance.com/en/futures/AVNT_USDT" target="_blank" class="symbol-link">AVNTUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">39</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">38.6%</td>
+                    <td><div class="tracking-result tracking-loss">-8.31%</div></td>
+                    <td><span class="risk-badge risk-high">완료</span></td>
+                </tr>
+            
+                <tr style="font-size: 1.3rem;">
+                    <td style="font-weight: bold; color: var(--accent-color);">2025-10-01 (수) 02:01</td>
+                    <td><a href="https://www.binance.com/en/futures/AVNT_USDT" target="_blank" class="symbol-link">AVNTUSDT</a></td>
+                    <td style="font-weight: bold; color: var(--accent-color);">41</td>
+                    <td style="font-weight: bold; color: var(--accent-color);">40.7%</td>
+                    <td><div class="tracking-result tracking-loss">-1.44%</div></td>
+                    <td><span class="risk-badge risk-high">완료</span></td>
+                </tr>
+            
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+
+        <!-- 위험 경고 메시지 -->
+        <div class="warning-box">
+            <div class="warning-title">🚨 CRITICAL INVESTMENT WARNING 🚨</div>
+            <div class="warning-text">
+                <strong>이 시스템은 교육 목적으로만 제공됩니다:</strong><br><br>
+                🔴 <strong>숏 포지션은 UNLIMITED LOSS 위험이 있습니다</strong><br>
+                🔴 <strong>실제 학습된 AI도 절대 100% 정확하지 않습니다</strong><br>
+                🔴 <strong>과거 데이터가 미래 수익을 보장하지 않습니다</strong><br>
+                🔴 <strong>암호화폐는 극도로 변동성이 큰 자산입니다</strong><br>
+                🔴 <strong>손실 감당 가능한 매우 소액으로만 시작하세요</strong><br>
+                🔴 <strong>전문가 상담 없이 분석 결과만으로 투자하지 마세요</strong><br>
+                🔴 <strong>시장 조작, 규제 변화, 기술적 오류 등 예측 불가능한 위험이 존재합니다</strong><br><br>
+                <strong>이 도구는 분석 참고용일 뿐, 투자 조언이 아닙니다.</strong>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
