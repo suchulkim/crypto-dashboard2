@@ -1,0 +1,712 @@
+
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>바이낸스 선물 시장 현황 분석 - 2025-10-11 18:53:57</title>
+        <!-- Bootstrap CSS 추가 -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- FontAwesome CSS 추가 -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 20px;
+                background-color: #f5f7fa;
+                color: #333;
+                font-size: 16px;
+            }
+            
+            .container {
+                max-width: 1400px;
+                margin: 0 auto;
+                background-color: white;
+                border-radius: 10px;
+                box-shadow: 0 0 20px rgba(0,0,0,0.1);
+                overflow: hidden;
+            }
+            
+            .header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 30px;
+                text-align: center;
+            }
+            
+            .header h1 {
+                margin: 0 0 10px 0;
+                font-size: 2.5em;
+                font-weight: 700;
+            }
+            
+            .header h3 {
+                margin: 10px 0;
+                opacity: 0.9;
+                font-size: 1.3em;
+            }
+            
+            .header p {
+                margin: 5px 0;
+                opacity: 0.9;
+                font-size: 1.1em;
+            }
+
+            .nav-section {
+                background: white;
+                padding: 20px;
+                text-align: center;
+                border-bottom: 1px solid #eee;
+            }
+            
+            /* Bootstrap 버튼 스타일 커스터마이징 */
+            .nav-section .btn {
+                margin: 5px 10px;
+                padding: 12px 24px;
+                border-radius: 8px;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                display: inline-block;
+                border: 2px solid transparent;
+            }
+            
+            .nav-section .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                text-decoration: none;
+            }
+            
+            /* 현재 페이지 버튼 스타일 */
+            .nav-section .btn-info {
+                background-color: #17a2b8;
+                border-color: #17a2b8;
+                color: white;
+            }
+            
+            .nav-section .btn-info:hover {
+                background-color: #138496;
+                border-color: #117a8b;
+                color: white;
+            }
+            
+            .stats-container {
+                padding: 30px;
+                background-color: #f8f9ff;
+            }
+            
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+                margin-bottom: 30px;
+            }
+            
+            .stat-card {
+                background: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                text-align: center;
+                border-left: 4px solid #667eea;
+                transition: transform 0.3s ease;
+            }
+            
+            .stat-card:hover {
+                transform: translateY(-5px);
+            }
+            
+            .stat-number {
+                font-size: 2.5em;
+                font-weight: bold;
+                color: #667eea;
+                margin-bottom: 5px;
+            }
+            
+            .stat-label {
+                color: #666;
+                font-size: 1.1em;
+            }
+            
+            .chart-container {
+                background: white;
+                border-radius: 10px;
+                padding: 25px;
+                margin-bottom: 20px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            
+            .table-container {
+                padding: 30px;
+            }
+            
+            .table-wrapper {
+                overflow-x: auto;
+                margin-bottom: 30px;
+            }
+            
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                background: white;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            
+            th {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 15px 12px;
+                text-align: center;
+                font-weight: 600;
+                font-size: 1.3em;
+            }
+            
+            td {
+                padding: 12px;
+                text-align: center;
+                border-bottom: 1px solid #eee;
+                font-size: 1.1em;
+            }
+            
+            tr:hover {
+                background-color: #f8f9ff;
+            }
+            
+            .symbol-link {
+                color: #667eea;
+                text-decoration: none;
+                font-weight: bold;
+                transition: all 0.3s ease;
+            }
+            
+            .symbol-link:hover {
+                color: #4a90e2;
+                text-decoration: underline;
+                background-color: rgba(102, 126, 234, 0.1);
+                padding: 2px 4px;
+                border-radius: 3px;
+            }
+            
+            .positive {
+                color: #4caf50;
+                font-weight: bold;
+            }
+            
+            .negative {
+                color: #f44336;
+                font-weight: bold;
+            }
+            
+            .neutral {
+                color: #6c757d;
+                font-weight: 600;
+            }
+            
+            .progress-custom {
+                height: 20px;
+                border-radius: 10px;
+            }
+            
+            .emoji {
+                font-size: 1.2em;
+            }
+            
+            .update-time {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 10px 15px;
+                border-radius: 25px;
+                font-size: 0.9rem;
+            }
+            
+            @media (max-width: 768px) {
+                body {
+                    padding: 10px;
+                }
+                
+                .header h1 {
+                    font-size: 1.8em;
+                }
+                
+                .stats-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                th, td {
+                    padding: 8px 6px;
+                    font-size: 1.2em;
+                }
+                
+                .nav-section .btn {
+                    display: block;
+                    margin: 5px auto;
+                    width: 80%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- 헤더 섹션 -->
+            <div class="header">
+                <h1><i class="fas fa-chart-line"></i> 코인선물 시장 현황</h1>
+                <h3>4시간봉 기준 종합 분석</h3>
+                <p class="mb-0">분석 시간: 2025-10-11 18:53:57 | USD/KRW: 1,423원</p>
+            </div>
+
+            <!-- 네비게이션 섹션 -->
+            <div class="nav-section">
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="dashboard.html" class="btn btn-primary btn-lg">
+                        <i class="fas fa-chart-line"></i> 코인선물 종합지수
+                    </a>
+                    <a href="CandlePatternAnalysis.html" class="btn btn-warning btn-lg">
+                        <i class="fas fa-chart-bar"></i> 코인선물 숏포지션 패턴 검출 현황
+                    </a>
+                    <a href="AI_Choice.html" class="btn btn-success btn-lg">
+                        <i class="fas fa-robot"></i> 코인선물 AI 숏포지션 종목 분석
+                    </a>
+                </div>
+            </div>
+
+            <!-- 주요 통계 카드 섹션 -->
+            <div class="stats-container">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">509</div>
+                        <div class="stat-label"><i class="fas fa-coins emoji"></i> 총 분석 종목</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number text-success">452</div>
+                        <div class="stat-label"><i class="fas fa-arrow-up emoji"></i> 양봉 (88.8%)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number text-danger">56</div>
+                        <div class="stat-label"><i class="fas fa-arrow-down emoji"></i> 음봉 (11.0%)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number text-info">18</div>
+                        <div class="stat-label"><i class="fas fa-chart-line emoji"></i> 20MA 위 (3.5%)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 시장 심리 섹션 -->
+            <div class="table-container">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="chart-container">
+                            <h4><i class="fas fa-brain"></i> 시장 심리 분석</h4>
+                            <div class="text-center mb-3">
+                                <h3 style="color: #20c997;">탐욕 (강한 매수세)</h3>
+                            </div>
+                            <div class="mb-3">
+                                <label>양봉 비율</label>
+                                <div class="progress progress-custom">
+                                    <div class="progress-bar bg-success" style="width: 88.8015717092338%"></div>
+                                </div>
+                                <small>88.8%</small>
+                            </div>
+                            <div class="mb-3">
+                                <label>20MA 위 비율</label>
+                                <div class="progress progress-custom">
+                                    <div class="progress-bar bg-info" style="width: 3.536345776031434%"></div>
+                                </div>
+                                <small>3.5%</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="chart-container">
+                            <h4><i class="fas fa-chart-bar"></i> 변동률 통계</h4>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <h5 class="positive">+19.25%</h5>
+                                        <small>최대 상승률</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <h5 class="negative">-12.28%</h5>
+                                        <small>최대 하락률</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <h6 class="positive">+2.16%</h6>
+                                        <small>평균 4H 변동률</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <h6 class="negative">-24.19%</h6>
+                                        <small>평균 24H 변동률</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 거래량 정보 -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="chart-container">
+                            <h4><i class="fas fa-dollar-sign"></i> 거래량 현황</h4>
+                            <div class="row text-center">
+                                <div class="col-md-4">
+                                    <h5 class="text-primary">$200,174,955,462</h5>
+                                    <small>총 거래대금 (USD)</small>
+                                </div>
+                                <div class="col-md-4">
+                                    <h5 class="text-success">₩284,888,996,613,309</h5>
+                                    <small>총 거래대금 (KRW)</small>
+                                </div>
+                                <div class="col-md-4">
+                                    <h5 class="text-info">12/509</h5>
+                                    <small>24H 상승 종목</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 상위 수익률 종목 -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="chart-container">
+                            <h4><i class="fas fa-trophy"></i> 4시간 상위 10개 종목</h4>
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>순위</th>
+                                            <th>심볼</th>
+                                            <th>4H 변동</th>
+                                            <th>24H 변동</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td><a href="https://www.binance.com/en/futures/RDNTUSDT" target="_blank" class="symbol-link">RDNTUSDT</a></td>
+                                        <td><span class="positive">+19.25%</span></td>
+                                        <td><span class="negative">-20.37%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td><a href="https://www.binance.com/en/futures/IPUSDT" target="_blank" class="symbol-link">IPUSDT</a></td>
+                                        <td><span class="positive">+14.59%</span></td>
+                                        <td><span class="negative">-35.26%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td><a href="https://www.binance.com/en/futures/USELESSUSDT" target="_blank" class="symbol-link">USELESSUSDT</a></td>
+                                        <td><span class="positive">+13.01%</span></td>
+                                        <td><span class="negative">-32.09%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td><a href="https://www.binance.com/en/futures/PIPPINUSDT" target="_blank" class="symbol-link">PIPPINUSDT</a></td>
+                                        <td><span class="positive">+11.07%</span></td>
+                                        <td><span class="negative">-42.04%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td><a href="https://www.binance.com/en/futures/BELUSDT" target="_blank" class="symbol-link">BELUSDT</a></td>
+                                        <td><span class="positive">+10.10%</span></td>
+                                        <td><span class="negative">-26.24%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>6</td>
+                                        <td><a href="https://www.binance.com/en/futures/PROVEUSDT" target="_blank" class="symbol-link">PROVEUSDT</a></td>
+                                        <td><span class="positive">+9.10%</span></td>
+                                        <td><span class="negative">-18.43%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>7</td>
+                                        <td><a href="https://www.binance.com/en/futures/GRIFFAINUSDT" target="_blank" class="symbol-link">GRIFFAINUSDT</a></td>
+                                        <td><span class="positive">+8.78%</span></td>
+                                        <td><span class="negative">-39.72%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>8</td>
+                                        <td><a href="https://www.binance.com/en/futures/OBOLUSDT" target="_blank" class="symbol-link">OBOLUSDT</a></td>
+                                        <td><span class="positive">+8.75%</span></td>
+                                        <td><span class="negative">-4.08%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>9</td>
+                                        <td><a href="https://www.binance.com/en/futures/MYROUSDT" target="_blank" class="symbol-link">MYROUSDT</a></td>
+                                        <td><span class="positive">+8.69%</span></td>
+                                        <td><span class="negative">-32.69%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>10</td>
+                                        <td><a href="https://www.binance.com/en/futures/MAVIAUSDT" target="_blank" class="symbol-link">MAVIAUSDT</a></td>
+                                        <td><span class="positive">+7.60%</span></td>
+                                        <td><span class="negative">-35.02%</span></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="chart-container">
+                            <h4><i class="fas fa-chart-line"></i> 거래대금 상위 10개 종목</h4>
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>순위</th>
+                                            <th>심볼</th>
+                                            <th>거래대금</th>
+                                            <th>4H 변동</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td><a href="https://www.binance.com/en/futures/ETHUSDT" target="_blank" class="symbol-link">ETHUSDT</a></td>
+                                        <td>₩74,407,609,514,492</td>
+                                        <td><span class="positive">+1.70%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td><a href="https://www.binance.com/en/futures/BTCUSDT" target="_blank" class="symbol-link">BTCUSDT</a></td>
+                                        <td>₩73,300,516,650,043</td>
+                                        <td><span class="positive">+1.16%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td><a href="https://www.binance.com/en/futures/SOLUSDT" target="_blank" class="symbol-link">SOLUSDT</a></td>
+                                        <td>₩20,330,036,658,996</td>
+                                        <td><span class="positive">+0.88%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td><a href="https://www.binance.com/en/futures/XRPUSDT" target="_blank" class="symbol-link">XRPUSDT</a></td>
+                                        <td>₩9,899,056,609,036</td>
+                                        <td><span class="positive">+2.31%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td><a href="https://www.binance.com/en/futures/DOGEUSDT" target="_blank" class="symbol-link">DOGEUSDT</a></td>
+                                        <td>₩9,370,500,993,155</td>
+                                        <td><span class="positive">+1.48%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>6</td>
+                                        <td><a href="https://www.binance.com/en/futures/BNBUSDT" target="_blank" class="symbol-link">BNBUSDT</a></td>
+                                        <td>₩8,547,364,950,418</td>
+                                        <td><span class="positive">+2.53%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>7</td>
+                                        <td><a href="https://www.binance.com/en/futures/ASTERUSDT" target="_blank" class="symbol-link">ASTERUSDT</a></td>
+                                        <td>₩3,719,509,297,233</td>
+                                        <td><span class="positive">+2.52%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>8</td>
+                                        <td><a href="https://www.binance.com/en/futures/SUIUSDT" target="_blank" class="symbol-link">SUIUSDT</a></td>
+                                        <td>₩3,059,510,851,015</td>
+                                        <td><span class="positive">+1.32%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>9</td>
+                                        <td><a href="https://www.binance.com/en/futures/1000PEPEUSDT" target="_blank" class="symbol-link">1000PEPEUSDT</a></td>
+                                        <td>₩3,004,225,357,924</td>
+                                        <td><span class="positive">+3.05%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>10</td>
+                                        <td><a href="https://www.binance.com/en/futures/ADAUSDT" target="_blank" class="symbol-link">ADAUSDT</a></td>
+                                        <td>₩2,911,525,534,785</td>
+                                        <td><span class="positive">+2.16%</span></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 하위 수익률 종목 -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="chart-container">
+                            <h4><i class="fas fa-chart-line-down"></i> 4시간 하위 10개 종목</h4>
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>순위</th>
+                                            <th>심볼</th>
+                                            <th>4H 변동</th>
+                                            <th>24H 변동</th>
+                                            <th>20MA 위치</th>
+                                            <th>거래대금 (원)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td><a href="https://www.binance.com/en/futures/EVAAUSDT" target="_blank" class="symbol-link">EVAAUSDT</a></td>
+                                        <td><span class="negative">-4.04%</span></td>
+                                        <td><span class="negative">-33.69%</span></td>
+                                        <td><span class="negative">MA아래</span></td>
+                                        <td>₩88,643,736,814</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td><a href="https://www.binance.com/en/futures/VFYUSDT" target="_blank" class="symbol-link">VFYUSDT</a></td>
+                                        <td><span class="negative">-4.08%</span></td>
+                                        <td><span class="negative">-33.63%</span></td>
+                                        <td><span class="negative">MA아래</span></td>
+                                        <td>₩85,802,354,695</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td><a href="https://www.binance.com/en/futures/FARTCOINUSDT" target="_blank" class="symbol-link">FARTCOINUSDT</a></td>
+                                        <td><span class="negative">-4.12%</span></td>
+                                        <td><span class="negative">-42.39%</span></td>
+                                        <td><span class="negative">MA아래</span></td>
+                                        <td>₩1,157,728,518,895</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td><a href="https://www.binance.com/en/futures/XPINUSDT" target="_blank" class="symbol-link">XPINUSDT</a></td>
+                                        <td><span class="negative">-4.28%</span></td>
+                                        <td><span class="negative">-37.58%</span></td>
+                                        <td><span class="negative">MA아래</span></td>
+                                        <td>₩74,036,648,069</td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td><a href="https://www.binance.com/en/futures/INUSDT" target="_blank" class="symbol-link">INUSDT</a></td>
+                                        <td><span class="negative">-4.29%</span></td>
+                                        <td><span class="negative">-9.12%</span></td>
+                                        <td><span class="positive">MA위</span></td>
+                                        <td>₩1,309,842,193,032</td>
+                                    </tr>
+                                    <tr>
+                                        <td>6</td>
+                                        <td><a href="https://www.binance.com/en/futures/STBLUSDT" target="_blank" class="symbol-link">STBLUSDT</a></td>
+                                        <td><span class="negative">-4.66%</span></td>
+                                        <td><span class="negative">-27.84%</span></td>
+                                        <td><span class="negative">MA아래</span></td>
+                                        <td>₩257,600,061,360</td>
+                                    </tr>
+                                    <tr>
+                                        <td>7</td>
+                                        <td><a href="https://www.binance.com/en/futures/FORMUSDT" target="_blank" class="symbol-link">FORMUSDT</a></td>
+                                        <td><span class="negative">-4.72%</span></td>
+                                        <td><span class="negative">-34.91%</span></td>
+                                        <td><span class="negative">MA아래</span></td>
+                                        <td>₩355,846,213,594</td>
+                                    </tr>
+                                    <tr>
+                                        <td>8</td>
+                                        <td><a href="https://www.binance.com/en/futures/LYNUSDT" target="_blank" class="symbol-link">LYNUSDT</a></td>
+                                        <td><span class="negative">-7.08%</span></td>
+                                        <td><span class="negative">-24.78%</span></td>
+                                        <td><span class="negative">MA아래</span></td>
+                                        <td>₩125,464,107,281</td>
+                                    </tr>
+                                    <tr>
+                                        <td>9</td>
+                                        <td><a href="https://www.binance.com/en/futures/KGENUSDT" target="_blank" class="symbol-link">KGENUSDT</a></td>
+                                        <td><span class="negative">-7.81%</span></td>
+                                        <td><span class="positive">+18.87%</span></td>
+                                        <td><span class="negative">MA아래</span></td>
+                                        <td>₩680,757,284,054</td>
+                                    </tr>
+                                    <tr>
+                                        <td>10</td>
+                                        <td><a href="https://www.binance.com/en/futures/BANUSDT" target="_blank" class="symbol-link">BANUSDT</a></td>
+                                        <td><span class="negative">-12.28%</span></td>
+                                        <td><span class="negative">-15.71%</span></td>
+                                        <td><span class="negative">MA아래</span></td>
+                                        <td>₩43,396,997,518</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 투자 참고사항 -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="chart-container">
+                            <h4><i class="fas fa-lightbulb"></i> 투자 참고사항</h4>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-chart-bar text-primary"></i> 4시간봉 기준이므로 단기 추세를 반영</li>
+                                        <li><i class="fas fa-chart-line text-info"></i> 20MA 위치는 중기 추세를 나타냄</li>
+                                        <li><i class="fas fa-dollar-sign text-warning"></i> 거래대금이 높을수록 유동성 풍부</li>
+                                        <li><i class="fas fa-search text-dark"></i> 개별 종목 분석과 함께 종합적 판단</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-brain text-purple"></i> 시장 심리를 참고하여 전체 방향성 파악</li>
+                                        <li><i class="fas fa-balance-scale text-secondary"></i> 위험도/기회 분석으로 포지션 크기 조절</li>
+                                        <li><i class="fas fa-link text-primary"></i> 종목명 클릭 시 바이낸스 차트로 이동</li>
+                                        <li><i class="fas fa-exclamation-triangle text-danger"></i> 투자에는 항상 위험이 따름</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 업데이트 시간 -->
+        <div class="update-time">
+            <i class="fas fa-clock"></i> 마지막 업데이트: {analysis_time}
+        </div>
+
+        <!-- Bootstrap JS 추가 -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            // 페이지 로드 시 애니메이션
+            document.addEventListener('DOMContentLoaded', function() {{
+                const cards = document.querySelectorAll('.stat-card, .chart-container');
+                cards.forEach((card, index) => {{
+                    setTimeout(() => {{
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(20px)';
+                        card.style.transition = 'all 0.5s ease';
+                        setTimeout(() => {{
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }}, 50);
+                    }}, index * 100);
+                }});
+            }});
+
+            // 자동 새로고침 (5분마다)
+            setTimeout(() => {{
+                if (confirm('새로운 데이터로 업데이트하시겠습니까?')) {{
+                    location.reload();
+                }}
+            }}, 300000); // 5분
+        </script>
+    </body>
+    </html>
