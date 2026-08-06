@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>텔레그램 200MA 터치 워치리스트</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://s3.tradingview.com/tv.js"></script>
+<style>
+:root{--bg:#0a0e14;--card:#0d1520;--border:#21262d;--text:#f0f6fc;--muted:#8b949e;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;}
+.container{max-width:1100px;margin:0 auto;padding:14px 18px;}
+.header{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);color:#fff;
+  padding:1.2rem 1.8rem;border-radius:12px;margin-bottom:1rem;border:1px solid #2a3a5e;}
+.header h1{font-family:Rajdhani,sans-serif;font-size:1.8rem;font-weight:700;color:#0088cc;}
+.header .sub{font-size:.92rem;color:#b8cef5;margin-top:.2rem;}
+.toolbar{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:.8rem 1rem;margin-bottom:1rem;}
+.toolbar input[type=text]{background:#06090f;border:1px solid var(--border);color:var(--text);
+  border-radius:6px;padding:.45rem .7rem;font-size:.9rem;flex:1;min-width:160px;}
+.chip-btn{background:#161b22;border:1px solid var(--border);color:var(--muted);
+  border-radius:20px;padding:.4rem 1rem;font-size:.85rem;font-weight:600;cursor:pointer;}
+.chip-btn.active{background:#0088cc;color:#fff;border-color:#0088cc;}
+.chip-btn:hover{filter:brightness(1.15);}
+.stat-badge{margin-left:auto;font-size:.85rem;color:var(--muted);}
+.restore-btn{background:#21262d;color:#f0f6fc;border:1px solid #444;border-radius:6px;
+  padding:.4rem .9rem;font-size:.82rem;cursor:pointer;}
+.restore-btn:hover{background:#30363d;}
+.grid{display:grid;grid-template-columns:1fr;gap:1rem;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:.9rem;position:relative;}
+.card .del-btn{position:absolute;top:.6rem;right:.6rem;width:26px;height:26px;
+  border-radius:50%;background:#2a1216;border:1px solid #dc3545;color:#dc3545;
+  cursor:pointer;font-size:.95rem;line-height:1;display:flex;align-items:center;
+  justify-content:center;z-index:5;}
+.card .del-btn:hover{background:#dc3545;color:#fff;}
+.card-head{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.6rem;
+  padding-right:2rem;}
+.card-head .sym{font-family:Rajdhani,sans-serif;font-size:1.35rem;font-weight:700;}
+.tf-tag{display:inline-block;padding:.1rem .55rem;border-radius:6px;font-size:.75rem;font-weight:700;}
+.tf-1d{background:#1f6feb33;color:#58a6ff;border:1px solid #1f6feb88;}
+.tf-4h{background:#3fb95033;color:#56d364;border:1px solid #3fb95088;}
+.hit-badge{padding:.1rem .5rem;border-radius:10px;font-size:.72rem;font-weight:700;
+  background:#f0b90b22;border:1px solid #f0b90b66;color:#f0b90b;}
+.meta-row{font-size:.78rem;color:var(--muted);margin-bottom:.5rem;}
+.chart-tabs{display:flex;gap:.3rem;margin-bottom:.4rem;flex-wrap:wrap;align-items:center;}
+.chart-tabs .tabs-label{font-size:.72rem;color:var(--muted);margin-right:.2rem;}
+.chart-tab-btn{background:#161b22;border:1px solid var(--border);color:var(--muted);
+  border-radius:6px;padding:.25rem .7rem;font-size:.75rem;cursor:pointer;}
+.chart-tab-btn.active{background:#30363d;color:#fff;}
+.chart-box-single{width:100%;height:520px;background:#06090f;border-radius:8px;overflow:hidden;}
+.section-heading{display:flex;align-items:center;gap:.7rem;margin:1.3rem 0 .8rem;}
+.section-heading h2{font-family:Rajdhani,sans-serif;font-size:1.3rem;font-weight:700;}
+.section-heading.tf-1d-h h2{color:#58a6ff;}
+.section-heading.tf-4h-h h2{color:#56d364;}
+.section-heading .cnt{padding:.15rem .8rem;border-radius:20px;font-size:.85rem;font-weight:700;color:#fff;}
+.section-heading.tf-1d-h .cnt{background:#1f6feb;}
+.section-heading.tf-4h-h .cnt{background:#3fb950;}
+.section-heading .line{flex:1;height:1px;background:var(--border);}
+.empty-state{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.95rem;}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>📡 텔레그램 200MA 터치 워치리스트</h1>
+    <div class="sub">텔레그램 채널 알림 파싱 · 2026-08-07 00:00:00 KST (= 2026-08-06 15:00:00 UTC) 이후 감지 종목만 누적 · 갱신: 2026-08-07 07:26:38</div>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" id="searchBox" placeholder="종목명 검색 (예: BTC)">
+    <button class="chip-btn active" data-filter-tf="all">전체</button>
+    <button class="chip-btn" data-filter-tf="1d">1D만</button>
+    <button class="chip-btn" data-filter-tf="4h">4H만</button>
+    <button class="restore-btn" id="restoreBtn">삭제 복원</button>
+    <span class="stat-badge" id="statBadge"></span>
+  </div>
+
+  <div id="section1d">
+    <div class="section-heading tf-1d-h">
+      <h2>📅 일봉(1D) 200MA 터치</h2>
+      <span class="cnt" id="cnt1d">0개</span>
+      <div class="line"></div>
+    </div>
+    <div class="grid" id="grid1d"></div>
+    <div class="empty-state" id="empty1d" style="display:none;">1D 감지 종목이 없습니다.</div>
+  </div>
+
+  <div id="section4h">
+    <div class="section-heading tf-4h-h">
+      <h2>⏱ 4시간봉(4H) 200MA 터치</h2>
+      <span class="cnt" id="cnt4h">0개</span>
+      <div class="line"></div>
+    </div>
+    <div class="grid" id="grid4h"></div>
+    <div class="empty-state" id="empty4h" style="display:none;">4H 감지 종목이 없습니다.</div>
+  </div>
+
+</div>
+
+<script>
+const ITEMS = [{"symbol": "ORDIUSDT", "first_seen": "2026-08-06T22:02:00+00:00", "last_seen": "2026-08-06T22:02:00+00:00", "tfs": {"1d": {"hit_count": 1, "first_detected": "2026-08-06T22:02:00+00:00", "price": 3.426, "last_detected": "2026-08-06T22:02:00+00:00", "raw_time_str": "2026-08-07 07:01:59"}}}, {"symbol": "RIVERUSDT", "first_seen": "2026-08-06T21:48:53+00:00", "last_seen": "2026-08-06T21:48:53+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T21:48:53+00:00", "price": 3.187, "last_detected": "2026-08-06T21:48:53+00:00", "raw_time_str": "2026-08-07 06:48:52"}}}, {"symbol": "KGENUSDT", "first_seen": "2026-08-06T20:49:40+00:00", "last_seen": "2026-08-06T20:49:40+00:00", "tfs": {"1d": {"hit_count": 1, "first_detected": "2026-08-06T20:49:40+00:00", "price": 0.1946, "last_detected": "2026-08-06T20:49:40+00:00", "raw_time_str": "2026-08-07 05:49:39"}}}, {"symbol": "ISRGUSDT", "first_seen": "2026-08-06T20:45:37+00:00", "last_seen": "2026-08-06T20:45:37+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T20:45:37+00:00", "price": 375.82, "last_detected": "2026-08-06T20:45:37+00:00", "raw_time_str": "2026-08-07 05:45:36"}}}, {"symbol": "ONDOUSDT", "first_seen": "2026-08-06T20:39:23+00:00", "last_seen": "2026-08-06T20:39:23+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T20:39:23+00:00", "price": 0.3652, "last_detected": "2026-08-06T20:39:23+00:00", "raw_time_str": "2026-08-07 05:39:22"}}}, {"symbol": "MRVLUSDT", "first_seen": "2026-08-06T20:27:54+00:00", "last_seen": "2026-08-06T20:27:54+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T20:27:54+00:00", "price": 208.8, "last_detected": "2026-08-06T20:27:54+00:00", "raw_time_str": "2026-08-07 05:27:54"}}}, {"symbol": "HOLOUSDT", "first_seen": "2026-08-06T20:26:01+00:00", "last_seen": "2026-08-06T20:26:01+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T20:26:01+00:00", "price": 0.06796, "last_detected": "2026-08-06T20:26:01+00:00", "raw_time_str": "2026-08-07 05:26:00"}}}, {"symbol": "STGUSDT", "first_seen": "2026-08-06T20:09:16+00:00", "last_seen": "2026-08-06T20:09:16+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T20:09:16+00:00", "price": 0.1396, "last_detected": "2026-08-06T20:09:16+00:00", "raw_time_str": "2026-08-07 05:09:15"}}}, {"symbol": "TWLOUSDT", "first_seen": "2026-08-06T20:05:57+00:00", "last_seen": "2026-08-06T20:05:57+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T20:05:57+00:00", "price": 199.19, "last_detected": "2026-08-06T20:05:57+00:00", "raw_time_str": "2026-08-07 05:05:56"}}}, {"symbol": "BLUAIUSDT", "first_seen": "2026-08-06T20:01:18+00:00", "last_seen": "2026-08-06T20:01:18+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T20:01:18+00:00", "price": 0.013369, "last_detected": "2026-08-06T20:01:18+00:00", "raw_time_str": "2026-08-07 05:01:17"}}}, {"symbol": "EWZUSDT", "first_seen": "2026-08-06T19:48:26+00:00", "last_seen": "2026-08-06T19:48:26+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T19:48:26+00:00", "price": 35.79, "last_detected": "2026-08-06T19:48:26+00:00", "raw_time_str": "2026-08-07 04:48:25"}}}, {"symbol": "CRCLUSDT", "first_seen": "2026-08-06T19:39:33+00:00", "last_seen": "2026-08-06T19:39:33+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T19:39:33+00:00", "price": 63.89, "last_detected": "2026-08-06T19:39:33+00:00", "raw_time_str": "2026-08-07 04:39:33"}}}, {"symbol": "BLENDUSDT", "first_seen": "2026-08-06T19:31:03+00:00", "last_seen": "2026-08-06T19:31:03+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T19:31:03+00:00", "price": 0.06432, "last_detected": "2026-08-06T19:31:03+00:00", "raw_time_str": "2026-08-07 04:31:03"}}}, {"symbol": "SFPUSDT", "first_seen": "2026-08-06T19:30:44+00:00", "last_seen": "2026-08-06T19:30:44+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T19:30:44+00:00", "price": 0.2173, "last_detected": "2026-08-06T19:30:44+00:00", "raw_time_str": "2026-08-07 04:30:44"}}}, {"symbol": "BZUSDT", "first_seen": "2026-08-06T19:29:05+00:00", "last_seen": "2026-08-06T19:29:05+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T19:29:05+00:00", "price": 83.4, "last_detected": "2026-08-06T19:29:05+00:00", "raw_time_str": "2026-08-07 04:29:05"}}}, {"symbol": "SUNUSDT", "first_seen": "2026-08-06T19:06:44+00:00", "last_seen": "2026-08-06T19:06:44+00:00", "tfs": {"1d": {"hit_count": 1, "first_detected": "2026-08-06T19:06:44+00:00", "price": 0.017964, "last_detected": "2026-08-06T19:06:44+00:00", "raw_time_str": "2026-08-07 04:06:43"}}}, {"symbol": "PAYPUSDT", "first_seen": "2026-08-06T19:03:07+00:00", "last_seen": "2026-08-06T19:03:07+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T19:03:07+00:00", "price": 15.46, "last_detected": "2026-08-06T19:03:07+00:00", "raw_time_str": "2026-08-07 04:03:06"}}}, {"symbol": "TSTUSDT", "first_seen": "2026-08-06T18:07:28+00:00", "last_seen": "2026-08-06T18:07:28+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T18:07:28+00:00", "price": 0.01107, "last_detected": "2026-08-06T18:07:28+00:00", "raw_time_str": "2026-08-07 03:07:27"}}}, {"symbol": "WENUSDT", "first_seen": "2026-08-06T18:05:52+00:00", "last_seen": "2026-08-06T18:05:52+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T18:05:52+00:00", "price": 7.589, "last_detected": "2026-08-06T18:05:52+00:00", "raw_time_str": "2026-08-07 03:05:52"}}}, {"symbol": "ERAUSDT", "first_seen": "2026-08-06T18:02:58+00:00", "last_seen": "2026-08-06T18:02:58+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T18:02:58+00:00", "price": 0.0772, "last_detected": "2026-08-06T18:02:58+00:00", "raw_time_str": "2026-08-07 03:02:57"}}}, {"symbol": "ZEREBROUSDT", "first_seen": "2026-08-06T17:57:48+00:00", "last_seen": "2026-08-06T17:57:48+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T17:57:48+00:00", "price": 0.035542, "last_detected": "2026-08-06T17:57:48+00:00", "raw_time_str": "2026-08-07 02:57:47"}}}, {"symbol": "EDGEUSDT", "first_seen": "2026-08-06T17:40:03+00:00", "last_seen": "2026-08-06T17:40:03+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T17:40:03+00:00", "price": 0.387, "last_detected": "2026-08-06T17:40:03+00:00", "raw_time_str": "2026-08-07 02:40:02"}}}, {"symbol": "IDOLUSDT", "first_seen": "2026-08-06T17:36:27+00:00", "last_seen": "2026-08-06T17:36:27+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T17:36:27+00:00", "price": 0.01601, "last_detected": "2026-08-06T17:36:27+00:00", "raw_time_str": "2026-08-07 02:36:26"}}}, {"symbol": "LITUSDT", "first_seen": "2026-08-06T17:07:45+00:00", "last_seen": "2026-08-06T17:07:45+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T17:07:45+00:00", "price": 2.2819, "last_detected": "2026-08-06T17:07:45+00:00", "raw_time_str": "2026-08-07 02:07:45"}}}, {"symbol": "BSVUSDT", "first_seen": "2026-08-06T17:04:14+00:00", "last_seen": "2026-08-06T17:04:14+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T17:04:14+00:00", "price": 13.35, "last_detected": "2026-08-06T17:04:14+00:00", "raw_time_str": "2026-08-07 02:04:13"}}}, {"symbol": "GOATUSDT", "first_seen": "2026-08-06T16:50:58+00:00", "last_seen": "2026-08-06T16:50:58+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T16:50:58+00:00", "price": 0.01341, "last_detected": "2026-08-06T16:50:58+00:00", "raw_time_str": "2026-08-07 01:50:58"}}}, {"symbol": "NBISUSDT", "first_seen": "2026-08-06T16:43:52+00:00", "last_seen": "2026-08-06T16:43:52+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T16:43:52+00:00", "price": 200.88, "last_detected": "2026-08-06T16:43:52+00:00", "raw_time_str": "2026-08-07 01:43:52"}}}, {"symbol": "000MOGUSDT", "first_seen": "2026-08-06T16:43:46+00:00", "last_seen": "2026-08-06T16:43:46+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T16:43:46+00:00", "price": 0.103, "last_detected": "2026-08-06T16:43:46+00:00", "raw_time_str": "2026-08-07 01:43:45"}}}, {"symbol": "PORTALUSDT", "first_seen": "2026-08-06T16:42:00+00:00", "last_seen": "2026-08-06T16:42:00+00:00", "tfs": {"1d": {"hit_count": 1, "first_detected": "2026-08-06T16:42:00+00:00", "price": 0.0127, "last_detected": "2026-08-06T16:42:00+00:00", "raw_time_str": "2026-08-07 01:41:59"}}}, {"symbol": "HAEDALUSDT", "first_seen": "2026-08-06T16:27:57+00:00", "last_seen": "2026-08-06T16:27:57+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T16:27:57+00:00", "price": 0.0158, "last_detected": "2026-08-06T16:27:57+00:00", "raw_time_str": "2026-08-07 01:27:56"}}}, {"symbol": "BELUSDT", "first_seen": "2026-08-06T16:19:56+00:00", "last_seen": "2026-08-06T16:26:11+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T16:19:56+00:00", "price": 0.10341, "last_detected": "2026-08-06T16:19:56+00:00", "raw_time_str": "2026-08-07 01:19:55"}, "1d": {"hit_count": 1, "first_detected": "2026-08-06T16:26:11+00:00", "price": 0.10673, "last_detected": "2026-08-06T16:26:11+00:00", "raw_time_str": "2026-08-07 01:26:11"}}}, {"symbol": "MAGICUSDT", "first_seen": "2026-08-06T16:20:05+00:00", "last_seen": "2026-08-06T16:20:05+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T16:20:05+00:00", "price": 0.04223, "last_detected": "2026-08-06T16:20:05+00:00", "raw_time_str": "2026-08-07 01:20:05"}}}, {"symbol": "GENIUSUSDT", "first_seen": "2026-08-06T16:14:42+00:00", "last_seen": "2026-08-06T16:14:42+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T16:14:42+00:00", "price": 0.3455, "last_detected": "2026-08-06T16:14:42+00:00", "raw_time_str": "2026-08-07 01:14:41"}}}, {"symbol": "PIXELUSDT", "first_seen": "2026-08-06T16:09:20+00:00", "last_seen": "2026-08-06T16:09:20+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T16:09:20+00:00", "price": 0.004523, "last_detected": "2026-08-06T16:09:20+00:00", "raw_time_str": "2026-08-07 01:09:20"}}}, {"symbol": "XAIUSDT", "first_seen": "2026-08-06T16:09:16+00:00", "last_seen": "2026-08-06T16:09:16+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T16:09:16+00:00", "price": 0.00672, "last_detected": "2026-08-06T16:09:16+00:00", "raw_time_str": "2026-08-07 01:09:16"}}}, {"symbol": "PROMPTUSDT", "first_seen": "2026-08-06T16:07:26+00:00", "last_seen": "2026-08-06T16:07:26+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T16:07:26+00:00", "price": 0.02063, "last_detected": "2026-08-06T16:07:26+00:00", "raw_time_str": "2026-08-07 01:07:26"}}}, {"symbol": "ACEUSDT", "first_seen": "2026-08-06T16:05:31+00:00", "last_seen": "2026-08-06T16:05:31+00:00", "tfs": {"1d": {"hit_count": 1, "first_detected": "2026-08-06T16:05:31+00:00", "price": 0.1277, "last_detected": "2026-08-06T16:05:31+00:00", "raw_time_str": "2026-08-07 01:05:30"}}}, {"symbol": "MSTRUSDT", "first_seen": "2026-08-06T15:53:17+00:00", "last_seen": "2026-08-06T15:53:17+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T15:53:17+00:00", "price": 97.46, "last_detected": "2026-08-06T15:53:17+00:00", "raw_time_str": "2026-08-07 00:53:17"}}}, {"symbol": "TRXUSDT", "first_seen": "2026-08-06T15:51:40+00:00", "last_seen": "2026-08-06T15:51:40+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T15:51:40+00:00", "price": 0.32736, "last_detected": "2026-08-06T15:51:40+00:00", "raw_time_str": "2026-08-07 00:51:39"}}}, {"symbol": "SMHUSDT", "first_seen": "2026-08-06T15:49:04+00:00", "last_seen": "2026-08-06T15:49:04+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T15:49:04+00:00", "price": 578.5, "last_detected": "2026-08-06T15:49:04+00:00", "raw_time_str": "2026-08-07 00:49:03"}}}, {"symbol": "EDENUSDT", "first_seen": "2026-08-06T15:41:47+00:00", "last_seen": "2026-08-06T15:41:47+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T15:41:47+00:00", "price": 0.04161, "last_detected": "2026-08-06T15:41:47+00:00", "raw_time_str": "2026-08-07 00:41:46"}}}, {"symbol": "TSEMUSDT", "first_seen": "2026-08-06T15:40:12+00:00", "last_seen": "2026-08-06T15:40:12+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T15:40:12+00:00", "price": 229.05, "last_detected": "2026-08-06T15:40:12+00:00", "raw_time_str": "2026-08-07 00:40:11"}}}, {"symbol": "BANUSDT", "first_seen": "2026-08-06T15:40:07+00:00", "last_seen": "2026-08-06T15:40:07+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T15:40:07+00:00", "price": 0.0726, "last_detected": "2026-08-06T15:40:07+00:00", "raw_time_str": "2026-08-07 00:40:07"}}}, {"symbol": "PENGUUSDT", "first_seen": "2026-08-06T15:40:00+00:00", "last_seen": "2026-08-06T15:40:00+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T15:40:00+00:00", "price": 0.006183, "last_detected": "2026-08-06T15:40:00+00:00", "raw_time_str": "2026-08-07 00:39:59"}}}, {"symbol": "KMNOUSDT", "first_seen": "2026-08-06T15:09:29+00:00", "last_seen": "2026-08-06T15:09:29+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T15:09:29+00:00", "price": 0.01849, "last_detected": "2026-08-06T15:09:29+00:00", "raw_time_str": "2026-08-07 00:09:28"}}}, {"symbol": "MUUSDT", "first_seen": "2026-08-06T15:08:28+00:00", "last_seen": "2026-08-06T15:08:28+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T15:08:28+00:00", "price": 912.17, "last_detected": "2026-08-06T15:08:28+00:00", "raw_time_str": "2026-08-07 00:08:27"}}}, {"symbol": "BASUSDT", "first_seen": "2026-08-06T15:04:17+00:00", "last_seen": "2026-08-06T15:04:17+00:00", "tfs": {"4h": {"hit_count": 1, "first_detected": "2026-08-06T15:04:17+00:00", "price": 0.027882, "last_detected": "2026-08-06T15:04:17+00:00", "raw_time_str": "2026-08-07 00:04:17"}}}];
+const EXCHANGES = {"binance": {"label": "Binance", "color": "#f0b90b", "prefix": "BINANCE"}, "bybit": {"label": "Bybit", "color": "#f7a600", "prefix": "BYBIT"}, "okx": {"label": "OKX", "color": "#ffffff", "prefix": "OKX"}, "bitget": {"label": "Bitget", "color": "#00f0ff", "prefix": "BITGET"}};
+const DEFAULT_EX = "binance";
+const EXCLUDE_KEY = "tg_ma200_excluded_v1";
+
+function getExcluded() {
+  try { return new Set(JSON.parse(localStorage.getItem(EXCLUDE_KEY) || "[]")); }
+  catch(e) { return new Set(); }
+}
+function saveExcluded(set) {
+  localStorage.setItem(EXCLUDE_KEY, JSON.stringify([...set]));
+}
+
+let excluded = getExcluded();
+let sectionFilter = "all";
+let searchTerm = "";
+
+function fmtPrice(p) {
+  if (p >= 10000) return p.toLocaleString(undefined,{maximumFractionDigits:1});
+  if (p >= 1000)  return p.toLocaleString(undefined,{maximumFractionDigits:2});
+  if (p >= 1)     return p.toFixed(4);
+  if (p >= 0.01)  return p.toFixed(5);
+  return p.toFixed(7);
+}
+
+const TF_LABEL = { "1d": "1D 일봉", "4h": "4H 4시간봉" };
+const TF_INTERVAL = { "1d": "D", "4h": "240" };
+
+function exchangeLink(ex, symbol) {
+  if (ex === "binance") return `https://www.binance.com/en/futures/${symbol}`;
+  if (ex === "bybit")   return `https://www.bybit.com/trade/usdt/${symbol}`;
+  if (ex === "bitget")  return `https://www.bitget.com/futures/usdt/${symbol}`;
+  if (ex === "okx") {
+    const base = symbol.replace("USDT","").toLowerCase();
+    return `https://www.okx.com/trade-swap/${base}-usdt-swap`;
+  }
+  return "#";
+}
+
+function buildCard(item, tf) {
+  const d = item.tfs[tf];
+  if (!d) return null;
+
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.dataset.symbol = item.symbol;
+
+  const exOrder = [DEFAULT_EX, ...Object.keys(EXCHANGES).filter(e => e !== DEFAULT_EX)];
+  const chartTabsHtml = `<span class="tabs-label">차트 출처:</span>` + exOrder.map((ex, i) =>
+    `<button class="chart-tab-btn ${i===0?'active':''}" data-ex="${ex}">${EXCHANGES[ex].label}</button>`
+  ).join('');
+
+  const chartId = `chart_${tf}_${item.symbol}`;
+
+  div.innerHTML = `
+    <button class="del-btn" title="목록에서 삭제">✕</button>
+    <div class="card-head">
+      <span class="sym">${item.symbol.replace('USDT','')}</span>
+      <span style="font-size:.75rem;color:#8b949e;">/USDT</span>
+      <span class="tf-tag tf-${tf}">${tf.toUpperCase()}</span>
+      <span class="hit-badge">감지 ${d.hit_count || 1}회</span>
+      <span style="font-size:.75rem;color:#8b949e;">출처: 텔레그램 알림봇</span>
+    </div>
+    <div class="meta-row">
+      최초감지 ${(item.first_seen||'').slice(0,16).replace('T',' ')} · 최근감지 ${(item.last_seen||'').slice(0,16).replace('T',' ')}<br>
+      감지 당시 가격 ${fmtPrice(d.price)} (알림 시각 ${d.raw_time_str || '-'})
+    </div>
+    <div class="chart-tabs">${chartTabsHtml}</div>
+    <div class="chart-box-single" id="${chartId}"></div>
+  `;
+
+  div.querySelector('.del-btn').addEventListener('click', () => {
+    excluded.add(item.symbol);
+    saveExcluded(excluded);
+    render();
+  });
+
+  div.querySelectorAll('.chart-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      div.querySelectorAll('.chart-tab-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const ex = btn.dataset.ex;
+      mountSingleChart(chartId, `${EXCHANGES[ex].prefix}:${item.symbol}.P`, TF_INTERVAL[tf]);
+    });
+  });
+
+  return { el: div, chartId, tv: `${EXCHANGES[exOrder[0]].prefix}:${item.symbol}.P`, interval: TF_INTERVAL[tf] };
+}
+
+function mountSingleChart(containerId, tvSymbol, interval) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  const now = Math.floor(Date.now()/1000);
+  const CANDLE_COUNT = 200;
+  const INTERVAL_SECONDS = { "D": 60*60*24, "240": 60*60*4 };
+  const barSeconds = INTERVAL_SECONDS[interval] || 60*60*24;
+  const from = now - CANDLE_COUNT * barSeconds;
+  new TradingView.widget({
+    autosize: true,
+    symbol: tvSymbol,
+    interval: interval,
+    from, to: now,
+    timezone: "Asia/Seoul",
+    theme: "dark",
+    style: "1",
+    locale: "kr",
+    toolbar_bg: "#0c1220",
+    enable_publishing: false,
+    hide_side_toolbar: true,
+    hide_top_toolbar: false,
+    allow_symbol_change: false,
+    save_image: false,
+    container_id: containerId,
+    studies: [
+      {id:"MASimple@tv-basicstudies", inputs:{length:200}}
+    ],
+    studies_overrides: {
+      "moving average.plot.color":"#FF0000","moving average.plot.linewidth":2
+    },
+    overrides: {
+      "paneProperties.background":"#06090f",
+      "paneProperties.vertGridProperties.color":"#111827",
+      "paneProperties.horzGridProperties.color":"#111827",
+      "candleStyle.upColor":"#26a69a","candleStyle.downColor":"#ef5350",
+      "candleStyle.borderUpColor":"#26a69a","candleStyle.borderDownColor":"#ef5350",
+      "candleStyle.wickUpColor":"#26a69a","candleStyle.wickDownColor":"#ef5350"
+    }
+  });
+}
+
+function passesCommonFilter(item) {
+  if (excluded.has(item.symbol)) return false;
+  if (searchTerm && !item.symbol.toLowerCase().includes(searchTerm)) return false;
+  return true;
+}
+
+function renderSection(tf, gridId, emptyId, cntId) {
+  const grid = document.getElementById(gridId);
+  const empty = document.getElementById(emptyId);
+  grid.innerHTML = '';
+
+  const candidates = ITEMS.filter(item => passesCommonFilter(item) && item.tfs[tf]);
+
+  let shown = 0;
+  candidates.forEach(item => {
+    const built = buildCard(item, tf);
+    if (!built) return;
+    grid.appendChild(built.el);
+    mountSingleChart(built.chartId, built.tv, built.interval);
+    shown++;
+  });
+
+  document.getElementById(cntId).textContent = `${shown}개`;
+  empty.style.display = shown === 0 ? 'block' : 'none';
+  return shown;
+}
+
+function render() {
+  const show1d = sectionFilter === 'all' || sectionFilter === '1d';
+  const show4h = sectionFilter === 'all' || sectionFilter === '4h';
+  document.getElementById('section1d').style.display = show1d ? '' : 'none';
+  document.getElementById('section4h').style.display = show4h ? '' : 'none';
+
+  let c1d = 0, c4h = 0;
+  if (show1d) c1d = renderSection('1d', 'grid1d', 'empty1d', 'cnt1d');
+  if (show4h) c4h = renderSection('4h', 'grid4h', 'empty4h', 'cnt4h');
+
+  document.getElementById('statBadge').textContent =
+    `표시 1D ${c1d}개 · 4H ${c4h}개 / 전체 종목 ${ITEMS.length}개 (삭제됨 ${excluded.size}개)`;
+}
+
+document.getElementById('searchBox').addEventListener('input', (e) => {
+  searchTerm = e.target.value.trim().toUpperCase();
+  render();
+});
+document.querySelectorAll('.chip-btn[data-filter-tf]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.chip-btn[data-filter-tf]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    sectionFilter = btn.dataset.filterTf;
+    render();
+  });
+});
+document.getElementById('restoreBtn').addEventListener('click', () => {
+  excluded = new Set();
+  saveExcluded(excluded);
+  render();
+});
+
+render();
+</script>
+</body>
+</html>
