@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>거래소 간 가격 괴리 스캔 리포트</title>
+<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+<style>
+  body {
+    background: #0e1117; color: #e6e6e6; font-family: "Segoe UI", "Malgun Gothic", sans-serif;
+    margin: 0; padding: 24px;
+  }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  .meta-header { color: #9aa4b2; font-size: 13px; margin-bottom: 24px; }
+  .section-title { font-size: 18px; margin: 32px 0 12px; border-left: 4px solid #4f8cff; padding-left: 10px; }
+  .signal-card {
+    background: #161b22; border: 1px solid #2a3038; border-radius: 10px;
+    padding: 18px 20px; margin-bottom: 24px; scroll-margin-top: 16px;
+  }
+  .signal-card h2 { margin: 0 0 10px; font-size: 18px; }
+  .badge {
+    display: inline-block; font-size: 12px; padding: 3px 8px; border-radius: 6px; margin-left: 8px;
+  }
+  .badge-warn { background: #4a2f0e; color: #ffb454; border: 1px solid #ffb454; }
+  .price-table { border-collapse: collapse; margin-bottom: 10px; font-size: 13px; }
+  .price-table th, .price-table td { border: 1px solid #2a3038; padding: 4px 10px; text-align: left; }
+  .price-table th { background: #1c2230; }
+  .meta-line { font-size: 13px; color: #c3cad6; margin-bottom: 14px; }
+  .chart-grid { display: flex; flex-wrap: wrap; gap: 16px; }
+  .chart-box { flex: 1 1 420px; min-width: 380px; }
+  .chart-label { font-size: 12px; color: #9aa4b2; margin-bottom: 4px; }
+  .tv-widget { height: 360px; border-radius: 8px; overflow: hidden; }
+  .empty-msg { color: #7b8494; font-size: 14px; }
+  .summary-table {
+    border-collapse: collapse; width: 100%; font-size: 13px; margin-bottom: 8px;
+  }
+  .summary-table th, .summary-table td {
+    border: 1px solid #2a3038; padding: 6px 10px; text-align: left;
+  }
+  .summary-table th { background: #1c2230; }
+  .summary-table tbody tr:hover { background: #1a2029; }
+  .summary-table a { color: #4f8cff; text-decoration: none; font-weight: 600; }
+  .summary-table a:hover { text-decoration: underline; }
+  .price-summary-cell { color: #9aa4b2; font-size: 12px; }
+</style>
+</head>
+<body>
+  <h1>거래소 간 가격 괴리 스캔 리포트</h1>
+  <div class="meta-header">
+    생성 시각: 2026-08-28 16:19:57 &nbsp;|&nbsp;
+    대상 거래소: binance,okx,bybit,bitget &nbsp;|&nbsp;
+    급등임계값: 1.0% &nbsp;|&nbsp;
+    괴리임계값: 0.5% &nbsp;|&nbsp;
+    심볼충돌의심기준: 150.0%
+  </div>
+
+  <div class="section-title">📋 요약 — 실제 괴리 신호 (5건)</div>
+  
+        <table class="summary-table">
+          <thead>
+            <tr><th>종목</th><th>괴리율</th><th>24h 최대변동</th><th>최고가</th><th>최저가</th><th>거래소별 가격</th></tr>
+          </thead>
+          <tbody><tr>
+                <td><a href="#real_ONE">ONE</a></td>
+                <td>2.56%</td>
+                <td>3.4%</td>
+                <td>binance (0.0007783)</td>
+                <td>okx (0.0007589)</td>
+                <td class="price-summary-cell">binance 0.0007783 / okx 0.0007589</td>
+            </tr><tr>
+                <td><a href="#real_ONG">ONG</a></td>
+                <td>1.03%</td>
+                <td>5.4%</td>
+                <td>bybit (0.1137)</td>
+                <td>binance (0.11254)</td>
+                <td class="price-summary-cell">binance 0.11254 / bybit 0.1137 / bitget 0.11277</td>
+            </tr><tr>
+                <td><a href="#real_XPIN">XPIN</a></td>
+                <td>0.85%</td>
+                <td>17.9%</td>
+                <td>bitget (0.0011123)</td>
+                <td>bybit (0.0011029)</td>
+                <td class="price-summary-cell">binance 0.001105 / bybit 0.0011029 / bitget 0.0011123</td>
+            </tr><tr>
+                <td><a href="#real_4">4</a></td>
+                <td>0.77%</td>
+                <td>5.3%</td>
+                <td>bitget (0.012889)</td>
+                <td>bybit (0.01279)</td>
+                <td class="price-summary-cell">binance 0.012796 / bybit 0.01279 / bitget 0.012889</td>
+            </tr><tr>
+                <td><a href="#real_SIREN">SIREN</a></td>
+                <td>0.70%</td>
+                <td>4.2%</td>
+                <td>bybit (0.02895)</td>
+                <td>binance (0.02875)</td>
+                <td class="price-summary-cell">binance 0.02875 / bybit 0.02895</td>
+            </tr></tbody>
+        </table>
+        
+
+  <div class="section-title">📋 요약 — 심볼 충돌 의심 (0건)</div>
+  <p class="empty-msg">해당 없음</p>
+
+  <div class="section-title">✅ 실제 괴리 신호 상세 차트 (5건)</div>
+  
+        <section class="signal-card" id="real_ONE">
+          <h2>ONE </h2>
+          <table class="price-table">
+            <thead><tr><th>거래소</th><th>가격</th><th>contractSize</th></tr></thead>
+            <tbody><tr><td>binance</td><td>0.0007783</td><td>1.0</td></tr><tr><td>okx</td><td>0.0007589</td><td>100.0</td></tr></tbody>
+          </table>
+          <p class="meta-line">괴리율: <b>2.56%</b> &nbsp;|&nbsp;
+             24h 최대변동: <b>3.4%</b> &nbsp;|&nbsp;
+             최고가: binance (0.0007783) &nbsp;/&nbsp;
+             최저가: okx (0.0007589)</p>
+          <div class="chart-grid">
+            <div class="chart-box">
+              <div class="chart-label">binance — BINANCE:ONEUSDT.P</div>
+              <div id="tv_real_ONE_binance_0" class="tv-widget"></div>
+              <script type="text/javascript">
+                new TradingView.widget({
+                  "container_id": "tv_real_ONE_binance_0",
+                  "symbol": "BINANCE:ONEUSDT.P",
+                  "interval": "5",
+                  "theme": "dark",
+                  "style": "1",
+                  "locale": "kr",
+                  "autosize": true,
+                  "hide_top_toolbar": false,
+                  "hide_legend": false
+                });
+              </script>
+            </div>
+            
+            <div class="chart-box">
+              <div class="chart-label">okx — OKX:ONEUSDT.P</div>
+              <div id="tv_real_ONE_okx_1" class="tv-widget"></div>
+              <script type="text/javascript">
+                new TradingView.widget({
+                  "container_id": "tv_real_ONE_okx_1",
+                  "symbol": "OKX:ONEUSDT.P",
+                  "interval": "5",
+                  "theme": "dark",
+                  "style": "1",
+                  "locale": "kr",
+                  "autosize": true,
+                  "hide_top_toolbar": false,
+                  "hide_legend": false
+                });
+              </script>
+            </div>
+            </div>
+        </section>
+        
+        <section class="signal-card" id="real_ONG">
+          <h2>ONG </h2>
+          <table class="price-table">
+            <thead><tr><th>거래소</th><th>가격</th><th>contractSize</th></tr></thead>
+            <tbody><tr><td>binance</td><td>0.11254</td><td>1.0</td></tr><tr><td>bybit</td><td>0.1137</td><td>1.0</td></tr><tr><td>bitget</td><td>0.11277</td><td>1</td></tr></tbody>
+          </table>
+          <p class="meta-line">괴리율: <b>1.03%</b> &nbsp;|&nbsp;
+             24h 최대변동: <b>5.4%</b> &nbsp;|&nbsp;
+             최고가: bybit (0.1137) &nbsp;/&nbsp;
+             최저가: binance (0.11254)</p>
+          <div class="chart-grid">
+            <div class="chart-box">
+              <div class="chart-label">binance — BINANCE:ONGUSDT.P</div>
+              <div id="tv_real_ONG_binance_0" class="tv-widget"></div>
+              <script type="text/javascript">
+                new TradingView.widget({
+                  "container_id": "tv_real_ONG_binance_0",
+                  "symbol": "BINANCE:ONGUSDT.P",
+                  "interval": "5",
+                  "theme": "dark",
+                  "style": "1",
+                  "locale": "kr",
+                  "autosize": true,
+                  "hide_top_toolbar": false,
+                  "hide_legend": false
+                });
+              </script>
+            </div>
+            
+            <div class="chart-box">
+              <div class="chart-label">bybit — BYBIT:ONGUSDT.P</div>
+              <div id="tv_real_ONG_bybit_1" class="tv-widget"></div>
+              <script type="text/javascript">
+                new TradingView.widget({
+                  "container_id": "tv_real_ONG_bybit_1",
+                  "symbol": "BYBIT:ONGUSDT.P",
+                  "interval": "5",
+                  "theme": "dark",
+                  "style": "1",
+                  "locale": "kr",
+                  "autosize": true,
+                  "hide_top_toolbar": false,
+                  "hide_legend": false
+                });
+              </script>
+            </div>
+            
+            <div class="chart-box">
+              <div class="chart-label">bitget — BITGET:ONGUSDT.P</div>
+              <div id="tv_real_ONG_bitget_2" class="tv-widget"></div>
+              <script type="text/javascript">
+                new TradingView.widget({
+                  "container_id": "tv_real_ONG_bitget_2",
+                  "symbol": "BITGET:ONGUSDT.P",
+                  "interval": "5",
+                  "theme": "dark",
+                  "style": "1",
+                  "locale": "kr",
+                  "autosize": true,
+                  "hide_top_toolbar": false,
+                  "hide_legend": false
+                });
+              </script>
+            </div>
+            </div>
+        </section>
+        
+        <section class="signal-card" id="real_XPIN">
+          <h2>XPIN </h2>
+          <table class="price-table">
+            <thead><tr><th>거래소</th><th>가격</th><th>contractSize</th></tr></thead>
+            <tbody><tr><td>binance</td><td>0.001105</td><td>1.0</td></tr><tr><td>bybit</td><td>0.0011029</td><td>1.0</td></tr><tr><td>bitget</td><td>0.0011123</td><td>1</td></tr></tbody>
+          </table>
+          <p class="meta-line">괴리율: <b>0.85%</b> &nbsp;|&nbsp;
+             24h 최대변동: <b>17.9%</b> &nbsp;|&nbsp;
+             최고가: bitget (0.0011123) &nbsp;/&nbsp;
+             최저가: bybit (0.0011029)</p>
+          <div class="chart-grid">
+            <div class="chart-box">
+              <div class="chart-label">binance — BINANCE:XPINUSDT.P</div>
+              <div id="tv_real_XPIN_binance_0" class="tv-widget"></div>
+              <script type="text/javascript">
+                new TradingView.widget({
+                  "container_id": "tv_real_XPIN_binance_0",
+                  "symbol": "BINANCE:XPINUSDT.P",
+                  "interval": "5",
+                  "theme": "dark",
+                  "style": "1",
+                  "locale": "kr",
+                  "autosize": true,
+                  "hide_top_toolbar": false,
+                  "hide_legend": false
+                });
+              </script>
+            </div>
+            
+            <div class="chart-box">
+              <div class="chart-label">bybit — BYBIT:XPINUSDT.P</div>
+              <div id="tv_real_XPIN_bybit_1" class="tv-widget"></div>
+              <script type="text/javascript">
+                new TradingView.widget({
+                  "container_id": "tv_real_XPIN_bybit_1",
+                  "symbol": "BYBIT:XPINUSDT.P",
+                  "interval": "5",
+                  "theme": "dark",
+                  "style": "1",
+                  "locale": "kr",
+                  "autosize": true,
+                  "hide_top_toolbar": false,
+                  "hide_legend": false
+                });
+              </script>
+            </div>
+            
+            <div class="chart-box">
+              <div class="chart-label">bitget — BITGET:XPINUSDT.P</div>
+              <div id="tv_real_XPIN_bitget_2" class="tv-widget"></div>
+              <script type="text/javascript">
+                new TradingView.widget({
+                  "container_id": "tv_real_XPIN_bitget_2",
+                  "symbol": "BITGET:XPINUSDT.P",
+                  "interval": "5",
+                  "theme": "dark",
+                  "style": "1",
+                  "locale": "kr",
+                  "autosize": true,
+                  "hide_top_toolbar": false,
+                  "hide_legend": false
+                });
+              </script>
+            </div>
+            </div>
+        </section>
+        
+        <section class="signal-card" id="real_4">
+          <h2>4 </h2>
+          <table class="price-table">
+            <thead><tr><th>거래소</th><th>가격</th><th>contractSize</th></tr></thead>
+            <tbody><tr><td>binance</td><td>0.012796</td><td>1.0</td></tr><tr><td>bybit</td><td>0.01279</td><td>1.0</td></tr><tr><td>bitget</td><td>0.012889</td><td>1</td></tr></tbody>
+          </table>
+          <p class="meta-line">괴리율: <b>0.77%</b> &nbsp;|&nbsp;
+             24h 최대변동: <b>5.3%</b> &nbsp;|&nbsp;
+             최고가: bitget (0.012889) &nbsp;/&nbsp;
+             최저가: bybit (0.01279)</p>
+          <div class="chart-grid">
+            <div class="chart-box">
+              <div class="chart-label">binance — BINANCE:4USDT.P</div>
+              <div id="tv_real_4_binance_0" class="tv-widget"></div>
+              <script type="text/javascript">
+                new TradingView.widget({
+                  "container_id": "tv_real_4_binance_0",
+                  "symbol": "BINANCE:4USDT.P",
+                  "interval": "5",
+                  "theme": "dark",
+                  "style": "1",
+                  "locale": "kr",
+                  "autosize": true,
+                  "hide_top_toolbar": false,
+                  "hide_legend": false
+                });
+              </script>
+            </div>
+            
+            <div class="chart-box">
+              <div class="chart-label">bybit — BYBIT:4USDT.P</div>
+              <div id="tv_real_4_bybit_1" class="tv-widget"></div>
+              <script type="text/javascript">
+                new TradingView.widget({
+                  "container_id": "tv_real_4_bybit_1",
+                  "symbol": "BYBIT:4USDT.P",
+                  "interval": "5",
+                  "theme": "dark",
+                  "style": "1",
+                  "locale": "kr",
+                  "autosize": true,
+                  "hide_top_toolbar": false,
+                  "hide_legend": false
+                });
+              </script>
+            </div>
+            
+            <div class="chart-box">
+              <div class="chart-label">bitget — BITGET:4USDT.P</div>
+              <div id="tv_real_4_bitget_2" class="tv-widget"></div>
+              <script type="text/javascript">
+                new TradingView.widget({
+                  "container_id": "tv_real_4_bitget_2",
+                  "symbol": "BITGET:4USDT.P",
+                  "interval": "5",
+                  "theme": "dark",
+                  "style": "1",
+                  "locale": "kr",
+                  "autosize": true,
+                  "hide_top_toolbar": false,
+                  "hide_legend": false
+                });
+              </script>
+            </div>
+            </div>
+        </section>
+        
+        <section class="signal-card" id="real_SIREN">
+          <h2>SIREN </h2>
+          <table class="price-table">
+            <thead><tr><th>거래소</th><th>가격</th><th>contractSize</th></tr></thead>
+            <tbody><tr><td>binance</td><td>0.02875</td><td>1.0</td></tr><tr><td>bybit</td><td>0.02895</td><td>1.0</td></tr></tbody>
+          </table>
+          <p class="meta-line">괴리율: <b>0.70%</b> &nbsp;|&nbsp;
+             24h 최대변동: <b>4.2%</b> &nbsp;|&nbsp;
+             최고가: bybit (0.02895) &nbsp;/&nbsp;
+             최저가: binance (0.02875)</p>
+          <div class="chart-grid">
+            <div class="chart-box">
+              <div class="chart-label">binance — BINANCE:SIRENUSDT.P</div>
+              <div id="tv_real_SIREN_binance_0" class="tv-widget"></div>
+              <script type="text/javascript">
+                new TradingView.widget({
+                  "container_id": "tv_real_SIREN_binance_0",
+                  "symbol": "BINANCE:SIRENUSDT.P",
+                  "interval": "5",
+                  "theme": "dark",
+                  "style": "1",
+                  "locale": "kr",
+                  "autosize": true,
+                  "hide_top_toolbar": false,
+                  "hide_legend": false
+                });
+              </script>
+            </div>
+            
+            <div class="chart-box">
+              <div class="chart-label">bybit — BYBIT:SIRENUSDT.P</div>
+              <div id="tv_real_SIREN_bybit_1" class="tv-widget"></div>
+              <script type="text/javascript">
+                new TradingView.widget({
+                  "container_id": "tv_real_SIREN_bybit_1",
+                  "symbol": "BYBIT:SIRENUSDT.P",
+                  "interval": "5",
+                  "theme": "dark",
+                  "style": "1",
+                  "locale": "kr",
+                  "autosize": true,
+                  "hide_top_toolbar": false,
+                  "hide_legend": false
+                });
+              </script>
+            </div>
+            </div>
+        </section>
+        
+
+  <div class="section-title">⚠ 심볼 충돌 의심 상세 (0건)</div>
+  <p class="empty-msg">심볼 충돌 의심 종목이 없습니다.</p>
+
+</body>
+</html>
